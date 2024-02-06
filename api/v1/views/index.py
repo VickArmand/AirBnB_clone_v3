@@ -10,4 +10,6 @@ def ok():
     create a route /status on the object app_views that
     returns a JSON: "status": "OK
     """
-    return json.dumps({'status': 'OK'})
+    return json.dumps({
+        'status': 'OK'
+        })
