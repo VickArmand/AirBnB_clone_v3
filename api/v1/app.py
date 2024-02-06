@@ -2,7 +2,7 @@
 """
 register the blueprint app_views to your Flask instance app
 """
-from flask import Flask, render_template
+from flask import Flask, render_template, jsonify
 from models import storage
 from api.v1.views import app_views
 import os
@@ -17,6 +17,15 @@ def teardown(self):
     that calls storage.close()
     """
     storage.close()
+
+
+@app.errorhandler(404)
+def error_404(err):
+    """
+    a handler for 404 errors that returns a JSON-formatted
+    404 status code response.
+    """
+    return jsonify({"error": "Not found"})
 
 
 if __name__ == '__main__':
