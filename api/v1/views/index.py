@@ -11,8 +11,6 @@ from models.state import State
 from models.user import User
 
 
-classes = {"Amenity": Amenity, "City": City,
-           "Place": Place, "Review": Review, "State": State, "User": User}
 @app_views.route('/status')
 def ok():
     """
@@ -32,4 +30,3 @@ def count():
     for index in range(len(val)):
         resp[keys[index]] = storage.count(val[index])
     return json.dumps(resp)
-
