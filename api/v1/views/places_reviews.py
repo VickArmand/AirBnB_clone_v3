@@ -32,7 +32,7 @@ def post_state():
     request_data = request.get_json()
     if not request_data:
         abort(400, 'Not a JSON')
-    elif 'name' not in request_data.keys():
+    elif not request_data['name']:
         abort(400, 'Missing name')
     new_object = State(**request_data)
     storage.new(new_object)
