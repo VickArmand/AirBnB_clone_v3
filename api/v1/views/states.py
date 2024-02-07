@@ -37,7 +37,7 @@ def post_state():
     new_object = State(**request_data)
     storage.new(new_object)
     storage.save()
-    return new_object.to_dict()
+    return new_object.to_dict(), 201
 
 
 @app_views.route('/states/<state_id>', methods=['GET'], strict_slashes=False)
