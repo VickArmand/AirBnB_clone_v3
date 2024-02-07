@@ -3,6 +3,8 @@
 register the blueprint app_views
 to your Flask instance app
 """
+
+
 from flask import Flask, render_template, jsonify
 from models import storage
 from api.v1.views import app_views
