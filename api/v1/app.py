@@ -25,7 +25,7 @@ def error_404(err):
     a handler for 404 errors that returns a JSON-formatted
     404 status code response.
     """
-    return jsonify({"error": "Not found"}), 404
+    return jsonify({"error": "Not found"})
 
 
 if __name__ == '__main__':
