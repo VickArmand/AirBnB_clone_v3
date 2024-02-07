@@ -11,3 +11,4 @@ app_views = Blueprint(
         template_folder='templates'
         )
 from api.v1.views.index import *
+from api.v1.views.states import *
