@@ -5,7 +5,6 @@ handles all default RESTFul API actions
 """
 from api.v1.app import app_views, jsonify
 from flask import request, abort
-from models.state import State
 from models.amenity import Amenity
 from models import storage
 import json
