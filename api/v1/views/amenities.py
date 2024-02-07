@@ -6,67 +6,71 @@ handles all default RESTFul API actions
 from api.v1.app import app_views, jsonify
 from flask import request, abort
 from models.state import State
+from models.amenity import Amenity
 from models import storage
 import json
 
 
-@app_views.route('/states', methods=['GET'], strict_slashes=False)
-def all_states():
-    """Retrieves the list of all State objects"""
-    states = []
-    for obj in storage.all(State).values():
-        states.append(obj.to_dict())
-    return jsonify(states)
+@app_views.route('/amenities', methods=['GET'], strict_slashes=False)
+def all_amenities():
+    """Retrieves the list of all Amenity objects"""
+    amenities = []
+    for obj in storage.all(Amenity).values():
+        amenities.append(obj.to_dict())
+    return jsonify(amenities)
 
 
-@app_views.route('/states', methods=['POST'], strict_slashes=False)
-def post_state():
+@app_views.route('/amenities', methods=['POST'], strict_slashes=False)
+def post_amenities():
     """
-    Creates a State using POST method
+    Creates a Amenity using POST method
     If the HTTP body request is not valid JSON,
     raise a 400 error with the message Not a JSON
     If the dictionary doesn’t contain the key name,
     raise a 400 error with the message Missing name
-    Returns the new State with the status code 201
+    Returns the new Amenity with the status code 201
     """
     request_data = request.get_json()
     if not request_data:
         abort(400, 'Not a JSON')
-    elif not request_data['name']:
+    elif 'name' not in request_data.keys():
         abort(400, 'Missing name')
-    new_object = State(**request_data)
+    new_object = Amenity(**request_data)
     storage.new(new_object)
     storage.save()
     return new_object.to_dict(), 201
 
 
-@app_views.route('/states/<state_id>', methods=['GET'], strict_slashes=False)
-def get_state(state_id):
+@app_views.route('/amenities/<amenity_id>',
+                 methods=['GET'], strict_slashes=False)
+def get_amenities(amenity_id):
     """
-    Retrieves a State object
-    If the state_id is not linked to any State object,
+    Retrieves a Amenity object
+    If the amenity_id is not linked to any Amenity object,
     raise a 404 error
     """
-    state = storage.get(State, state_id)
-    if not state:
+    amenity = storage.get(Amenity, amenity_id)
+    if not amenity:
         abort(404)
-    return jsonify(state.to_dict())
+    return jsonify(amenity.to_dict())
 
 
-@app_views.route('/states/<state_id>', methods=['PUT'], strict_slashes=False)
-def put_state(state_id):
+@app_views.route('/amenities/<amenity_id>',
+                 methods=['PUT'], strict_slashes=False)
+def put_amenities(amenity_id):
     """
-    Updates a State object
-    If the state_id is not linked to any State object, raise a 404 error
+    Updates a Amenity object
+    If the amenity_id is not linked to any Amenity object,
+    raise a 404 error
     You must use request.get_json from Flask to transform
     the HTTP body request to a dictionary
     If the HTTP body request is not valid JSON,
     raise a 400 error with the message Not a JSON
-    Update the State object with all key-value pairs of the dictionary.
+    Update the Amenity object with all key-value pairs of the dictionary.
     Ignore keys: id, created_at and updated_at
-    Returns the State object with the status code 200
+    Returns the Amenity object with the status code 200
     """
-    obj = storage.get(State, state_id)
+    obj = storage.get(Amenity, amenity_id)
     request_data = request.get_json()
     if not type(request_data) == dict:
         abort(400, 'Not a JSON')
@@ -81,16 +85,16 @@ def put_state(state_id):
     return jsonify(obj.to_dict())
 
 
-@app_views.route('/states/<state_id>',
+@app_views.route('/amenities/<amenity_id>',
                  methods=['DELETE'], strict_slashes=False)
-def delete_state(state_id):
+def delete_amenities(amenity_id):
     """
-    Deletes a State object
-    If the state_id is not linked to any State object,
+    Deletes a Amenity object
+    If the state_id is not linked to any Amenity object,
     raise a 404 error
     otherwise Returns an empty dictionary with the status code 200
     """
-    obj = storage.get(State, state_id)
+    obj = storage.get(Amenity, amenity_id)
     if not obj:
         abort(404)
     storage.delete(obj)
