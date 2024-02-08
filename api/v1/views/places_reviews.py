@@ -31,7 +31,7 @@ def post_amenities():
     Returns the new Amenity with the status code 201
     """
     request_data = request.get_json()
-    if not request_data:
+    if not type(request_data) == dict:
         abort(400, 'Not a JSON')
     elif 'name' not in request_data.keys():
         abort(400, 'Missing name')
