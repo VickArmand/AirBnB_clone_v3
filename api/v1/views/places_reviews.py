@@ -59,7 +59,7 @@ def post_review(place_id):
     if not user:
         abort(404)
     new_object = Review(**request_data)
-    new_object.place_id = state_id
+    new_object.place_id = place_id
     storage.new(new_object)
     storage.save()
     return new_object.to_dict(), 201
