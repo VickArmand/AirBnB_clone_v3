@@ -34,8 +34,8 @@ def post_user():
     request_data = request.get_json()
     if not type(request_data) == dict:
         abort(400, 'Not a JSON')
-    elif 'name' not in request_data.keys():
-        abort(400, 'Missing name')
+    elif 'email' not in request_data.keys():
+        abort(400, 'Missing email')
     elif 'password' not in request_data.keys():
         abort(400, 'Missing password')
     new_object = User(**request_data)
