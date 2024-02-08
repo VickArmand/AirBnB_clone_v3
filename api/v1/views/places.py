@@ -32,13 +32,17 @@ def places_of_a_city(city_id):
                  methods=['POST'], strict_slashes=False)
 def post_place(city_id):
     """
-    If the state_id is not linked to any State object,
+    If the city_id is not linked to any City object,
     raise a 404 error
     If the HTTP body request is not a valid JSON,
     raise a 400 error with the message Not a JSON
     If the dictionary doesn’t contain the key name,
     raise a 400 error with the message Missing name
-    Returns the new City with the status code 201
+    If the dictionary doesn’t contain the key user_id,
+    raise a 400 error with the message Missing user_id
+    If the user_id is not linked to any User object,
+    raise a 404 error
+    Returns the new Place with the status code 201
     """
     request_data = request.get_json()
     city = storage.get(City, city_id)
@@ -46,7 +50,12 @@ def post_place(city_id):
         abort(400, 'Not a JSON')
     elif 'name' not in request_data.keys():
         abort(400, 'Missing name')
-    elif not state:
+    elif 'user_id' not in request_data.keys():
+        abort(400, 'Missing user_id')
+    elif not city:
+        abort(404)
+    user = storage.get(User, request_data['user_id'])
+    if not user:
         abort(404)
     new_object = Place(**request_data)
     new_object.city_id = city_id
@@ -59,8 +68,8 @@ def post_place(city_id):
                  methods=['GET'], strict_slashes=False)
 def get_place(place_id):
     """
-    Retrieves a City object
-    If the city_id is not linked to any city object,
+    Retrieves a Place object
+    If the place_id is not linked to any Place object,
     raise a 404 error
     """
     place = storage.get(Place, place_id)
@@ -73,16 +82,16 @@ def get_place(place_id):
                  methods=['PUT'], strict_slashes=False)
 def put_place(place_id):
     """
-    Updates a City object: PUT /api/v1/cities/<city_id>
-    If the city_id is not linked to any City object,
+    Updates a Place object
+    If the place_id is not linked to any Place object,
     raise a 404 error
     You must use request.get_json from Flask to transform
     the HTTP body request to a dictionary
     If the HTTP request body is not valid JSON,
     raise a 400 error with the message Not a JSON
-    Update the City object with all key-value pairs of the dictionary
+    Update the Place object with all key-value pairs of the dictionary
     Ignore keys: id, state_id, created_at and updated_at
-    Returns the City object with the status code 200
+    Returns the Place object with the status code 200
     """
     obj = storage.get(Place, place_id)
     request_data = request.get_json()
@@ -103,8 +112,8 @@ def put_place(place_id):
                  methods=['DELETE'], strict_slashes=False)
 def delete_place(place_id):
     """
-    Deletes a City object
-    If the city_id is not linked to any City object,
+    Deletes a Place object
+    If the place_id is not linked to any Place object,
     raise a 404 error
     otherwise Returns an empty dictionary with the status code 200
     """

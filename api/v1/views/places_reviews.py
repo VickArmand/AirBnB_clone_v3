@@ -5,87 +5,91 @@ handles all default RESTFul API actions
 """
 from api.v1.app import app_views, jsonify
 from flask import request, abort
-from models.state import State
-from models.city import City
+from models.review import Review
+from models.place import Place
 from models import storage
 import json
 
 
-@app_views.route('/states/<state_id>/cities',
+@app_views.route('/places/<place_id>/reviews',
                  methods=['GET'], strict_slashes=False)
-def cities_of_a_state(state_id):
+def reviews_of_a_place(place_id):
     """
-    Retrieves the list of all City objects of a State
-    If the state_id is not linked to any State object,
+    Retrieves the list of all Review objects of a Place
+    If the place_id is not linked to any Place object,
     raise a 404 error
     """
-    state = storage.get(State, state_id)
-    if not state:
+    place = storage.get(Place, place_id)
+    if not place:
         abort(404)
-    cities = []
-    for obj in state.cities:
-        cities.append(obj.to_dict())
-    return jsonify(cities)
+    reviews = []
+    for obj in place.reviews:
+        reviews.append(obj.to_dict())
+    return jsonify(reviews)
 
 
-@app_views.route('/states/<state_id>/cities',
+@app_views.route('/places/<place_id>/reviews',
                  methods=['POST'], strict_slashes=False)
-def post_city(state_id):
+def post_review(place_id):
     """
-    If the state_id is not linked to any State object,
+    If the place_id is not linked to any Place object,
     raise a 404 error
     If the HTTP body request is not a valid JSON,
     raise a 400 error with the message Not a JSON
-    If the dictionary doesn’t contain the key name,
-    raise a 400 error with the message Missing name
-    Returns the new City with the status code 201
+    If the dictionary doesn’t contain the key user_id,
+    raise a 400 error with the message Missing user_id
+    If the user_id is not linked to any User object,
+    raise a 404 error
+    If the dictionary doesn’t contain the key text,
+    raise a 400 error with the message Missing text
+    Returns the new Review with the status code 201
     """
     request_data = request.get_json()
-    state = storage.get(State, state_id)
+    place = storage.get(Place, place_id)
     if not request_data:
         abort(400, 'Not a JSON')
-    elif 'name' not in request_data.keys():
-        abort(400, 'Missing name')
-    elif not state:
+    elif 'text' not in request_data.keys():
+        abort(400, 'Missing text')
+    elif 'user_id' not in request_data.keys():
+        abort(400, 'Missing user_id')
+    elif not place:
         abort(404)
-    print('name' in request_data.keys())
-    new_object = City(**request_data)
-    new_object.state_id = state_id
+    user = storage.get(User, request_data['user_id'])
+    if not user:
+        abort(404)
+    new_object = Review(**request_data)
+    new_object.place_id = state_id
     storage.new(new_object)
     storage.save()
     return new_object.to_dict(), 201
 
 
-@app_views.route('/cities/<city_id>',
+@app_views.route('/reviews/<review_id>',
                  methods=['GET'], strict_slashes=False)
-def get_city(city_id):
+def get_review(review_id):
     """
-    Retrieves a City object
-    If the city_id is not linked to any city object,
+    Retrieves a Review object
+    If the review_id is not linked to any Review object,
     raise a 404 error
     """
-    city = storage.get(City, city_id)
-    if not city:
+    review = storage.get(Review, review_id)
+    if not review:
         abort(404)
-    return jsonify(city.to_dict())
+    return jsonify(review.to_dict())
 
 
-@app_views.route('/cities/<city_id>',
+@app_views.route('/reviews/<review_id>',
                  methods=['PUT'], strict_slashes=False)
-def put_city(city_id):
+def put_review(review_id):
     """
-    Updates a City object: PUT /api/v1/cities/<city_id>
-    If the city_id is not linked to any City object,
+    If the review_id is not linked to any Review object,
     raise a 404 error
-    You must use request.get_json from Flask to transform
-    the HTTP body request to a dictionary
     If the HTTP request body is not valid JSON,
     raise a 400 error with the message Not a JSON
-    Update the City object with all key-value pairs of the dictionary
-    Ignore keys: id, state_id, created_at and updated_at
-    Returns the City object with the status code 200
+    Ignore keys: id, user_id, place_id, created_at and updated_at
+    Returns the Review object with the status code 200
     """
-    obj = storage.get(City, city_id)
+    obj = storage.get(Review, review_id)
     request_data = request.get_json()
     if not type(request_data) == dict:
         abort(400, 'Not a JSON')
@@ -100,16 +104,16 @@ def put_city(city_id):
     return jsonify(obj.to_dict())
 
 
-@app_views.route('/cities/<city_id>',
+@app_views.route('/reviews/<review_id>',
                  methods=['DELETE'], strict_slashes=False)
-def delete_city(city_id):
+def delete_review(review_id):
     """
-    Deletes a City object
-    If the city_id is not linked to any City object,
+    Deletes a Review object
+    If the review_id is not linked to any Review object,
     raise a 404 error
     otherwise Returns an empty dictionary with the status code 200
     """
-    obj = storage.get(City, city_id)
+    obj = storage.get(Review, review_id)
     if not obj:
         abort(404)
     storage.delete(obj)
