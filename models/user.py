@@ -4,6 +4,7 @@ import models
 from models.base_model import BaseModel, Base
 from os import getenv
 import sqlalchemy
+import hashlib
 from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
 
@@ -20,7 +21,7 @@ class User(BaseModel, Base):
         reviews = relationship("Review", backref="user")
     else:
         email = ""
-        password = ""
+        password = hashlib.md5(b"").hexdigest()
         first_name = ""
         last_name = ""
 
