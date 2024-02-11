@@ -21,10 +21,13 @@ class User(BaseModel, Base):
         reviews = relationship("Review", backref="user")
     else:
         email = ""
-        password = hashlib.md5(b"").hexdigest()
+        password = ""
         first_name = ""
         last_name = ""
 
     def __init__(self, *args, **kwargs):
         """initializes user"""
+        if 'password' in kwargs:
+            pwd = kwargs['password']
+            kwargs['password'] = hashlib.md5(pwd.encode).hexdigest()
         super().__init__(*args, **kwargs)
