@@ -52,7 +52,6 @@ def link_amenity_place(place_id, amenity_id):
     return jsonify(amenity.to_dict()), 201
 
 
-
 @app_views.route('/places/<place_id>/amenities/<amenity_id>',
                  methods=['DELETE'], strict_slashes=False)
 def unlink_amenity_place(place_id, amenity_id):

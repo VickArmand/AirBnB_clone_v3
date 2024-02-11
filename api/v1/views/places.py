@@ -205,7 +205,7 @@ def places_search():
                 amenity = storage.get(Amenity, c_id)
                 if results:
                     new_results = [obj for obj in results
-                               if amenity in obj.amenities]
+                                   if amenity in obj.amenities]
                 else:
                     results = [obj for obj in objects.values()
                                if amenity in obj.amenities]
